@@ -18,7 +18,7 @@ const config = {
   // 输出
   output: {
     path: resolve('dist'),
-    filename: '[name].[hash:8].js'
+    filename: '[name].[hash:6].js'
   },
   // 解析
   resolve: {
@@ -57,7 +57,7 @@ const config = {
           options: {
             // 资源文件小于1024直接转成base64
             limit: 1024,
-            name: '[name].[ext]'
+            name: 'static/[name].[hash:6].[ext]'
           }
         }]
       }
@@ -76,7 +76,9 @@ const config = {
       // 标题
       title: 'React_basic',
       // 模版
-      template: resolve('src/tpl/index.html')
+      template: resolve('src/tpl/index.html'),
+      // 给定的图标路径，可将其添加到输出html中
+      favicon: resolve('src/assets/favicon.ico')
     })
   ]
 }
@@ -131,6 +133,8 @@ if (isDev) {
     // 此处vendor和下面CommonsChunkPlugin中的name相同
     vendor: ['react', 'react-dom']
   }
+  // 生产环境输出的js名称
+  config.output.filename = '[name].[chunkhash:6].js'
   // 生产环境stylus配置
   config.module.rules.push({
     test: /\.styl$/,
@@ -153,7 +157,7 @@ if (isDev) {
   })
   config.plugins.push(
     // 单独打包css的文件名，带有8为hash值
-    new ExtractTextWebpackPlugin('styles.[contentHash:8].css'),
+    new ExtractTextWebpackPlugin('styles.[contentHash:6].css'),
     // 公共代码分离打包
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor', 'mainifest']
