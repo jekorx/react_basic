@@ -18,12 +18,12 @@ const config = {
   // 输出
   output: {
     path: resolve('dist'),
-    filename: 'bundle.[hash:8].js'
+    filename: '[name].[hash:8].js'
   },
   // 解析
   resolve: {
     // 自动解析确定的扩展
-    extensions: ['.js', '.jsx', 'styl'],
+    extensions: ['.js', '.jsx', '.styl'],
     // 创建 import 或 require 的别名
     alias: {
       '@': resolve('src'),
@@ -66,8 +66,9 @@ const config = {
   plugins: [
     new webpack.DefinePlugin({
       // webpack编译过程中和自己写的js中调用
+      // 生产打包时必须包含production，否则Chrome React Developer Tools一直为红色
       'process.env': {
-        NODE_ENV: isDev ? '"dev"' : '"pro"'
+        NODE_ENV: isDev ? '"development"' : '"production"'
       }
     }),
     // 自动生成一个html文件、引入相关静态资源、bundle.js等功能
@@ -126,7 +127,7 @@ if (isDev) {
   // 生产环境配置
   // 配置单独打包依赖js库
   config.entry = {
-    app: resolve('src/index.js'),
+    app: resolve('src/index.jsx'),
     // 此处vendor和下面CommonsChunkPlugin中的name相同
     vendor: ['react', 'react-dom']
   }
@@ -145,7 +146,7 @@ if (isDev) {
       }, {
         loader: 'postcss-loader',
         options: {
-          sourceMap: true
+          sourceMap: false
         }
       }, 'stylus-loader']
     })
@@ -153,12 +154,9 @@ if (isDev) {
   config.plugins.push(
     // 单独打包css的文件名，带有8为hash值
     new ExtractTextWebpackPlugin('styles.[contentHash:8].css'),
+    // 公共代码分离打包
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor'
-    }),
-    // webpack相关的代码单独打包，两个CommonsChunkPlugin位置不能换
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'runtime'
+      names: ['vendor', 'mainifest']
     }),
     // 混淆相关
     new webpack.optimize.UglifyJsPlugin({
