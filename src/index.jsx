@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 
 import '@styles/reset'
-import App from '@/app'
+import App from '@views/app'
 
 // 使用react-hot-loader模块热更新
 if (module.hot) {
