@@ -32,5 +32,19 @@
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
-  }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "last 5 versions",
+    "Chrome >= 34",
+    "Firefox >= 30",
+    "Safari >= 6",
+    "ie > 8",
+    "iOS >= 7",
+    "Android >= 4"
+  ]
 }

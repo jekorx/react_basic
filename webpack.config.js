@@ -47,10 +47,6 @@ const config = {
         // 排除node_modules目录
         exclude: /node_modules/
       }, {
-        /* 开发中如果使用css文件，需以下配置 */
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }, {
         test: /\.(gif|jpg|jpeg|png|svg)$/,
         use: [{
           loader: 'url-loader',
@@ -89,6 +85,16 @@ if (isDev) {
     'react-hot-loader/patch',
     resolve('src/index.jsx')
   ]
+  // 开发中如果使用css文件，需以下配置
+  config.module.rules.push({
+    test: /\.css$/,
+    use: ['style-loader', 'css-loader', {
+      loader: 'postcss-loader',
+      options: {
+        sourceMap: true
+      }
+    }]
+  })
   // 开发环境stylus配置
   config.module.rules.push({
     test: /\.styl$/,
@@ -135,6 +141,21 @@ if (isDev) {
   }
   // 生产环境输出的js名称
   config.output.filename = '[name].[chunkhash:6].js'
+  // 生产中将css提取
+  config.module.rules.push({
+    test: /\.css$/,
+    // loader处理后依次往上处理，最后打包成css文件
+    use: ExtractTextWebpackPlugin.extract({
+      fallback: 'style-loader',
+      use: [{
+        loader: 'css-loader',
+        options: {
+          // css压缩
+          minimize: true
+        }
+      }, 'postcss-loader']
+    })
+  })
   // 生产环境stylus配置
   config.module.rules.push({
     test: /\.styl$/,
@@ -147,12 +168,7 @@ if (isDev) {
           // css压缩
           minimize: true
         }
-      }, {
-        loader: 'postcss-loader',
-        options: {
-          sourceMap: false
-        }
-      }, 'stylus-loader']
+      }, 'postcss-loader', 'stylus-loader']
     })
   })
   config.plugins.push(
